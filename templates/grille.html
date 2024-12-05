@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+
+<div class="page_grille">
+    <table>
+        {% for i in REQUEST_VARS["grille"] %}
+        <tr>
+            {% for a in i %}
+            {% if a == 1 %}
+            <td class="hachuré"> </td>
+            {% else %}
+            <td> </td>
+            {%endif%}
+            {%endfor%}
+        </tr>
+        {% endfor %}
+    </table>
+
+
+    <div id="pioche">
+        <div id="pioche_titre">Pioche</div>
+        {% for i in REQUEST_VARS["pioche"] %}
+        <div class="pioche_elem" onclick="set_selection_pioche('{{loop.index}}')" id="pioche-elem-{{loop.index}}">
+            <p>Taille : {{i["longueur"]}}x{{i["largeur"]}}</p>
+            <div class="div_affichage_couleur">
+                <p>Couleur :</p>
+                <div class="affichage_couleur" style="background-color: {{i['couleur']}};"></div>
+            </div>
+        </div>
+        {%endfor%}
+    </div>
+    <script>
+        var pioche_elem_id = {};
+        {% for i in REQUEST_VARS["pioche"] %}
+        pioche_elem_id[{{loop.index}}] = {{i["id"]}}
+        {% endfor %}
+
+        function set_selection_pioche(val) {
+            for (let step = 1; step < 5; step++) {
+                let elem = document.getElementById("pioche-elem-" + step)
+                console.log(elem)
+                // Runs 5 times, with values of step 0 through 4.
+                console.log(step);
+                if (step == Number(val)) {
+                    elem.classList.add("pioche_elem_select")
+                } else {
+                    elem.classList.remove("pioche_elem_select");
+                }
+            }
+        }
+    </script>
+</div>
+{% endblock %}

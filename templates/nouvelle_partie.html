@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+<form action="" method="post">
+<label for="">Taille de la grille : </label> <input type="number" id="longueur" name="longueur" min="5" max="40" value="10"/>x<input type="number" id="hauteur" name="hauteur" min="5" max="40" value="15"/>
+<br><input type="submit">
+</form>
+
+<p style="color: red;">{{REQUEST_VARS["err"]}}</p>
+{% endblock %}

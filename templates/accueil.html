@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+
+<ul>
+    <li>Nombre de parties joués sur le site : {{REQUEST_VARS["nb_parties"]}}</li>
+    <li>Nombre de constructions différentes : {{REQUEST_VARS["nb_constructions"]}}</li>
+    <li>Nombre de briques : {{REQUEST_VARS["nb_briques"]}}</li>
+</ul>
+
+
+    <div class="div_affichage_couleur">
+        <p>Top cinq des couleurs de brique :</p>
+        {% for i in REQUEST_VARS["top_couleurs"] %}
+        <div class="affichage_couleur" style="background-color: {{i}};"></div>
+        {% endfor %}
+    </div>
+
+
+<table>
+    <thead>
+        <tr>
+            <th>Noms du joueur</th>
+            <th>Score minimal</th>
+            <th>Score maximal</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for i in REQUEST_VARS["joueurs"] %}
+        <tr>
+            <td>{{i["nom"]}}</td>
+            <td>{{i["min"]}}</td>
+            <td>{{i["max"]}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p>Parties avec le plus et le moins de pièces défaussés :</p>
+<table>
+    <thead>
+        <tr>
+            <th>Nombre de pièces défaussés</th>
+            <th>Début</th>
+            <th>Fin</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for i in REQUEST_VARS["defaussé"] %}
+        <tr>
+            <td>{{i["nb"]}}</td>
+            <td>{{i["debut"]}}</td>
+            <td>{{i["fin"]}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
