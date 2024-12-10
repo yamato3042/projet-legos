@@ -1,18 +1,26 @@
+html {
+    height: 100%;
+}
 body {
     display: flex;
     flex-direction: column;
     font-family: Arial, Helvetica, sans-serif;
     margin: 0;
+    height: 100%;
 }
 
 header {
     background-color: #89A8B2;
-    padding-left: 2em;
+    display: flex;
+    justify-content: center;
+    background-image: url(/projet-legos/static/img/header_fond.jpg);
+    background-size: contain;
+
+    background-repeat: repeat;
 }
 
 header img {
-    width: 6em;
-    margin-right: 5em;
+    width: 9em;
 }
 
 nav {
@@ -36,9 +44,9 @@ nav a:hover {
 }
 
 #div-central {
+    flex-grow: 1;
     background-color: #E5E1DA;
     padding-left: 2em;
-    flex: 1;
 }
 
 footer {
@@ -134,4 +142,31 @@ td {
 
 .pioche_elem_select:hover {
     background-color: #3f4a4e;
+}
+
+.nouvelle_partie_form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    gap: 1em;
+    align-items: center;
+}
+
+.nouvelle_partie_bouton_y_aller {
+    box-shadow: rgba(0, 0, 0, 0.136719) 0px 2px 2px 0px, rgba(0, 0, 0, 0.117188) 0px 3px 1px -2px, rgba(0, 0, 0, 0.199219) 0px 1px 5px 0px;
+    background-color: #3f4a4e;
+    color: white;
+    padding-left: 1.5em;
+    padding-right: 1.5em;
+    padding-bottom: 0.8em;
+    padding-top: 0.8em;
+    border-radius: 2px;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.nouvelle_partie_bouton_y_aller:hover {
+    background-color: #737b7e;
 }

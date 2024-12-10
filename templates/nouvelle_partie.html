@@ -1,10 +1,80 @@
 {% extends "base.html" %}
 
 {% block main_content %}
-<form action="" method="post">
-<label for="">Taille de la grille : </label> <input type="number" id="longueur" name="longueur" min="5" max="40" value="10"/>x<input type="number" id="hauteur" name="hauteur" min="5" max="40" value="15"/>
-<br><input type="submit">
+
+<script>
+
+    function tours_limite_radio(val) { //Cette fonction permet d'afficher ou non l'input du nombre de tours
+        let div_nb_tours = document.getElementById("div_nb_tours")
+        if (val == 0) {
+            div_nb_tours.style.display = 'none';
+        }
+        else {
+            div_nb_tours.style.display = 'block';
+        }
+    }
+</script>
+
+<form action="" method="post" class="nouvelle_partie_form">
+    <h2>Création d'une nouvelle partie</h2>
+    <table>
+        <tr>
+            <td><label for="pseudo">Pseudo : </label></td>
+            <td><input type="text" name="pseudo" id="pseudo" required></td>
+        </tr>
+        <tr>
+            <td><label for="">Taille de la grille : </label></td>
+            <td>
+                <input type="number" id="longueur" name="longueur" min="5" max="40" value="10" required />
+                x
+                <input type="number" id="hauteur" name="hauteur" min="5" max="40" value="15" required />
+            </td>
+        </tr>
+        <tr>
+            <td><label for="">Nombre de tours : </label></td>
+            <td>
+                <div>
+                    <input type="radio" name="tours_limitee" value="0" checked onclick="tours_limite_radio(0)">
+                    <label>Infini</label>
+                </div>
+                <div>
+                    <input type="radio" name="tours_limitee" value="1" onclick="tours_limite_radio(1)">
+                    <label>Limité</label>
+                </div>
+                <div id="div_nb_tours">
+                    <label for="nb_tours">Nombre : </label>
+                    <input type="number" name="nb_tours" id="nb_tours" value="60" min="2" max="500" />
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td><label>Mode : </label></td>
+            <td>
+                <div>
+                    <input type="radio" name="mode" value="facile" checked>
+                    <label>Facile</label>
+                </div>
+                <div>
+                    <input type="radio" name="mode" value="difficile">
+                    <label>Difficile</label>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <input type="submit">
+
+    {% if REQUEST_VARS["partie_num"] %}
+    <a class="nouvelle_partie_bouton_y_aller" href='/tours/?partie={{REQUEST_VARS["partie_num"]}}'>La partie a été généré, Y aller.</a>
+    {% endif %}
+
+    <p style="color: red;">{{REQUEST_VARS["err"]}}</p>
 </form>
 
-<p style="color: red;">{{REQUEST_VARS["err"]}}</p>
+
+
+
+
+<script>
+    tours_limite_radio(0)
+</script>
 {% endblock %}

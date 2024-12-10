@@ -1,68 +1,79 @@
 import random
-
+import util.gen_grille
+import util.create_user_if_not_exist
+from model.model_pg import execute_select_query, execute_other_query
+import json
+print(POST)
 if POST:
-    pourcentage_cases_remplies = [0.10,0.20] 
-    longueur = int(POST["longueur"][0])
-    hauteur = int(POST["hauteur"][0])
-    nb_cases = longueur*hauteur
+    ok = True
+    for i in ["pseudo", "longueur", "hauteur","tours_limitee", "nb_tours","mode"]:
+        if i not in POST:
+            REQUEST_VARS["err"] = "Il manque des chamsp"
+            ok = False
     
-    if not (5 <= longueur <= 40 and 5 <= hauteur <= 40):
-        REQUEST_VARS["err"] = "Veuillez entrer une longueur ou hauteur valide (entre 5 et 40 cases)"
-    else:
-        grille = []
-        for i in range(0, longueur):
-            c = []
-            for a in range(0,hauteur):
-                c.append(0)
-            grille.append(c)
+    if ok:
+        if not ((5 <= int(POST["longueur"][0]) <= 40) and (5 <= int(POST["hauteur"][0]) <= 40)):
+            REQUEST_VARS["err"] = "Veuillez entrer une longueur ou hauteur valide (entre 5 et 40 cases)"
+            ok = False
+        if POST["pseudo"][0] == "":
+            REQUEST_VARS["err"] = "Veuillez entrer un pseudo pour pouvoir jouer"
+            ok = False
             
-        #Remplissage des cases
-        min_perc = nb_cases * pourcentage_cases_remplies[0]
-        max_perc = nb_cases * pourcentage_cases_remplies[1]
+        if not (2 <= int(POST["nb_tours"][0]) <= 500):
+            REQUEST_VARS["err"] = "Nombre de tours invalide"
+            ok = False
         
-        nb_cases_remplies = int(random.uniform(min_perc, max_perc))
-
+        if not int(POST["tours_limitee"][0]) in [0,1]:
+            ok = False
         
-        last_case = [-1,-1]
-        for i in range(0, nb_cases_remplies):
-            if last_case == [-1,-1]:
-                #On remplit une case au hasard
-                case_x = random.randint(0, longueur-1)
-                case_y = random.randint(0, hauteur-1)
-                grille[case_x][case_y] = 1
-                last_case = [case_x, case_y]
-            else:
-                over = False
-                iterCount = 0 #Au bout de cinq itération, ça veux dire que la valeur est bloqué, donc on vas essayer d'en trouver une autre ailleurs
-                while not over:
-                    #On essaie de placer une case
-                    direction = random.choice([[-1,0],[1,0],[0,-1],[0,1]])
-                    new_case = [-1,-1]
-                    new_case = [last_case[0] + direction[0], last_case[1] + direction[1]]
-                    if iterCount >= 5:
-                        case_x = random.randint(0, longueur-1)
-                        case_y = random.randint(0, hauteur-1)
-                        #On vas venir appliquer la fonction sur une case aléatoire du tableau
-                        new_case = [case_x + direction[0], case_y + direction[1]]
-                        #Faire en sorte que la case soit à proximité d'une autre
-                        if grille[case_x][case_y] == 0:
-                            #On ne fait rien car nous ne serions pas à côté d'une case existante
-                            iterCount += 1
-                            continue
-                        
-                    
-                    #Maintenant on vérifie que les valeurs soit possibles
-                    if 0 <= new_case[0] <= longueur-1 and 0 <= new_case[1] <= hauteur-1:
-                        #Maintenant on vérifie que la valeur ne soit pas déjà prise
-                        if grille[new_case[0]][new_case[1]] == 0:
-                            grille[new_case[0]][new_case[1]] = 1
-                            last_case = new_case
-                            over = True
-                    iterCount += 1
-                        
-                
+        if not POST["mode"][0] in ["facile", "difficile"]:
+            ok = False
+    if ok: 
+        pourcentage_cases_remplies = [0.10,0.20] 
+        longueur = int(POST["longueur"][0])
+        hauteur = int(POST["hauteur"][0])
+        pseudo = POST["pseudo"][0]
+        tours_limitee = bool(int(POST["tours_limitee"][0]))
+        nb_tours = int(POST["nb_tours"][0])
+        difficulté = POST["mode"][0]
+        
+        
+        grille = util.gen_grille.gen_grille(pourcentage_cases_remplies, longueur, hauteur)
         
         print("-----")
         for i in grille:
             print(i)
         print("-----")
+          
+        #Si l'utilisateur n'existe pas alors on le crée
+        user_id = util.create_user_if_not_exist.create_user_if_not_exist(SESSION['CONNEXION'], pseudo)
+        print("id : ", user_id)
+        
+        #On crée une nouvelle partie dans la base
+        partie_id = execute_select_query(SESSION['CONNEXION'], "INSERT INTO parties (debut, grille) VALUES (NOW(), %s) RETURNING id", 
+                             [json.dumps({
+                                 "longueur": longueur,
+                                 "hauteur": hauteur,
+                                 "grille": grille
+                             })])[0][0]
+        
+        print("id partie : ", partie_id)
+        
+        #Les paramètres
+        #Le nombre de tours
+        #Si il n'y a pas de nombre de tours max alors nombre = -1
+        param_nb_tours = -1
+        if tours_limitee:
+            param_nb_tours = nb_tours
+            
+        print("tours limite : ", tours_limitee, " param_nb : ", param_nb_tours)
+        execute_other_query(SESSION['CONNEXION'], "INSERT INTO configuration (clee, valeur, parties_id) VALUES ('nb_tours', %s, %s)", [str(param_nb_tours), partie_id])
+        
+        #La difficulté
+        execute_other_query(SESSION['CONNEXION'], "INSERT INTO configuration (clee, valeur, parties_id) VALUES ('difficulte', %s, %s)", [difficulté, partie_id])
+        
+        #Le joueur
+        execute_other_query(SESSION['CONNEXION'], "INSERT INTO joueurs_parties (joueurs_id, parties_id) VALUES (%s,%s)", [user_id, partie_id])
+        
+        #La partie a été généré, on affiche donc un bouton pour y aller
+        REQUEST_VARS["partie_num"] = partie_id

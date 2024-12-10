@@ -37,7 +37,7 @@ for i in joueurs_raw:
 REQUEST_VARS["joueurs"] = joueurs
 defaussé_raw = execute_select_query(SESSION['CONNEXION'], """SELECT COUNT(*), debut, fin FROM tours
                                                 LEFT JOIN parties ON parties.id = parties_id 
-                                                GROUP BY id, debut, fin, action
+                                                GROUP BY parties.id, debut, fin, action
                                                 HAVING action LIKE 'défaussée'""")
 
 #TODO: TEMP
