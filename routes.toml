@@ -17,3 +17,8 @@ template = "grille.html"
 url = "nouvelle_partie"
 controleur = "controleurs/nouvelle_partie.py"
 template = "nouvelle_partie.html"
+
+[[routes]]
+url = "tours"
+controleur = "controleurs/tours.py"
+template = "tours.html"

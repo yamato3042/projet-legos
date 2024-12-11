@@ -23,33 +23,5 @@ for i in pioche_raw:
         "longueur": i[2],
         "couleur": i[3]
     })
-"""
-pioche.append({
-    "nom": "Brique rouge",
-    "largeur": 1,
-    "longueur": 1,
-    "couleur": "#FF0000"
-})
-
-pioche.append({
-    "nom": "Brique verte",
-    "largeur": 1,
-    "longueur": 2,
-    "couleur": "#FF0000"
-})
-
-pioche.append({
-    "nom": "Brique verte",
-    "largeur": 2,
-    "longueur": 2,
-    "couleur": "#FF0000"
-})
-
-pioche.append({
-    "nom": "Brique verte",
-    "largeur": 2,
-    "longueur": 1,
-    "couleur": "#FF0000"
-})"""
 
 REQUEST_VARS["pioche"] = pioche

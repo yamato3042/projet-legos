@@ -1,9 +1,11 @@
 from model.model_pg import count_instances, execute_select_query
 
+#Demande 1 :
 REQUEST_VARS["nb_briques"] = count_instances(SESSION['CONNEXION'], 'briques')[0][0]
 REQUEST_VARS["nb_constructions"] = count_instances(SESSION['CONNEXION'], 'constructions')[0][0]
 REQUEST_VARS["nb_parties"] = count_instances(SESSION['CONNEXION'], 'parties')[0][0]
 
+#Demande 2 :
 couleurs_raw = execute_select_query(SESSION['CONNEXION'], "SELECT couleur FROM briques GROUP BY couleur ORDER BY COUNT(*) DESC LIMIT 5")
 couleurs = []
 for i in couleurs_raw:
@@ -11,7 +13,8 @@ for i in couleurs_raw:
 
 REQUEST_VARS["top_couleurs"] = couleurs #TODO: Faut voir si la base est bonne avant
 
-joueurs_raw = execute_select_query(SESSION['CONNEXION'], """SELECT prenom, MIN(score), MAX(score) FROM joueurs_parties 
+#Demande 3 :
+joueurs_raw = execute_select_query(SESSION['CONNEXION'], """SELECT prenom, COALESCE(MIN(score),0), COALESCE(MAX(score),0) FROM joueurs_parties 
                                                 LEFT JOIN joueurs ON joueurs.id = joueurs_id
                                                 GROUP BY joueurs_id, prenom
                                                 ORDER BY MAX(score) DESC
@@ -23,7 +26,6 @@ joueurs_raw.append(["Jacques", "25", "250"])
 joueurs_raw.append(["Louis", "38", "400"])
 joueurs_raw.append(["Paul", "12", "1000"])
 
-
 joueurs = []
 for i in joueurs_raw:
     joueurs.append({
@@ -31,9 +33,9 @@ for i in joueurs_raw:
         "min": i[1],
         "max": i[2]
     })
-    
 
-
+#Demande 4
+#TODO: Refaire
 REQUEST_VARS["joueurs"] = joueurs
 defaussé_raw = execute_select_query(SESSION['CONNEXION'], """SELECT COUNT(*), debut, fin FROM tours
                                                 LEFT JOIN parties ON parties.id = parties_id 
@@ -62,3 +64,9 @@ if len(defaussé) > 10:
     defaussé = premiers_cinq + derniers_cinq
 
 REQUEST_VARS["defaussé"] = defaussé
+
+#Demande 5:
+#TODO:
+
+#Demande 6:
+#TODO:

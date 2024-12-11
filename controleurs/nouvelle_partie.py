@@ -2,6 +2,7 @@ import random
 import util.gen_grille
 import util.create_user_if_not_exist
 from model.model_pg import execute_select_query, execute_other_query
+from util.pioche import gen_pioche
 import json
 print(POST)
 if POST:
@@ -75,5 +76,7 @@ if POST:
         #Le joueur
         execute_other_query(SESSION['CONNEXION'], "INSERT INTO joueurs_parties (joueurs_id, parties_id) VALUES (%s,%s)", [user_id, partie_id])
         
+        #La pioche
+        gen_pioche(SESSION['CONNEXION'], partie_id, difficulté) 
         #La partie a été généré, on affiche donc un bouton pour y aller
         REQUEST_VARS["partie_num"] = partie_id

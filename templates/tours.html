@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+
+<form action="" method="post" class="page_grille">
+    <table>
+        {% for i in range(0,REQUEST_VARS["partie"].grille_longueur) %} {#TODO: Utiliser range() #}
+        <tr>
+            {% for a in range(0,REQUEST_VARS["partie"].grille_hauteur) %}
+            {% set var = REQUEST_VARS["partie"].grille[i][a] %}
+            {% if var == -1 %}
+            {#Case cochable#}
+            <td><input type="radio" name="grille" value="{{i}}-{{a}}"></td>
+            {% elif var == -2 %}
+            {#Case grisé#}
+            <td></td>
+            {% else %}
+            <td style="background-color: {{var}}"></td>
+            {% endif %}
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div>
+        <h3>Tour n°{{REQUEST_VARS["partie"].last_tour+1}}</h3>
+        <h3>Difficulté : {{REQUEST_VARS["partie"].diff}}</h3>
+        <div id="pioche">
+            <div id="pioche_titre">Pioche</div>
+            {% for i in REQUEST_VARS["pioche"] %}
+            <div class="pioche_elem" onclick="set_selection_pioche('{{loop.index}}')" id="pioche-elem-{{loop.index}}">
+                <input type="radio" name="pioche" value="{{loop.index}}">
+                <div class="pioche_inner">
+                    <p>Longueur : {{i["largeur"]}}</p>
+                    <p>Hauteur : {{i["longueur"]}}</p>
+                    <div class="div_affichage_couleur">
+                        <p>Couleur :</p>
+                        <div class="affichage_couleur" style="background-color: {{i['couleur']}};"></div>
+                    </div>
+                </div>
+            </div>
+            {%endfor%}
+        </div>
+
+        <div>
+            <div><input type="radio" name="action_tour" value="placer" checked required><label for="">Placer</label>
+            </div>
+            <div><input type="radio" name="action_tour" value="défausser"><label for="">Défausser</label></div>
+        </div>
+        <input type="submit">
+    </div>
+</form>
+
+
+{% endblock %}
