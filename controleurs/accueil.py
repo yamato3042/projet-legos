@@ -14,10 +14,10 @@ for i in couleurs_raw:
 REQUEST_VARS["top_couleurs"] = couleurs #TODO: Faut voir si la base est bonne avant
 
 #Demande 3 :
-joueurs_raw = execute_select_query(SESSION['CONNEXION'], """SELECT prenom, COALESCE(MIN(score),0), COALESCE(MAX(score),0) FROM joueurs_parties 
+joueurs_raw = execute_select_query(SESSION['CONNEXION'], """SELECT prenom, COALESCE(MIN(score),0), COALESCE(MAX(score),0) as score_max FROM joueurs_parties 
                                                 LEFT JOIN joueurs ON joueurs.id = joueurs_id
                                                 GROUP BY joueurs_id, prenom
-                                                ORDER BY MAX(score) DESC
+                                                ORDER BY score_max DESC
                                                 LIMIT 15""")
 
 joueurs = []

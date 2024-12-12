@@ -4,7 +4,6 @@ import util.create_user_if_not_exist
 from model.model_pg import execute_select_query, execute_other_query
 from util.pioche import gen_pioche
 import json
-print(POST)
 if POST:
     ok = True
     for i in ["pseudo", "longueur", "hauteur","tours_limitee", "nb_tours","mode"]:
@@ -40,15 +39,9 @@ if POST:
         
         
         grille = util.gen_grille.gen_grille(pourcentage_cases_remplies, longueur, hauteur)
-        
-        print("-----")
-        for i in grille:
-            print(i)
-        print("-----")
           
         #Si l'utilisateur n'existe pas alors on le crée
         user_id = util.create_user_if_not_exist.create_user_if_not_exist(SESSION['CONNEXION'], pseudo)
-        print("id : ", user_id)
         
         #On crée une nouvelle partie dans la base
         partie_id = execute_select_query(SESSION['CONNEXION'], "INSERT INTO parties (debut, grille) VALUES (NOW(), %s) RETURNING id", 
@@ -58,8 +51,6 @@ if POST:
                                  "grille": grille
                              })])[0][0]
         
-        print("id partie : ", partie_id)
-        
         #Les paramètres
         #Le nombre de tours
         #Si il n'y a pas de nombre de tours max alors nombre = -1
@@ -67,7 +58,6 @@ if POST:
         if tours_limitee:
             param_nb_tours = nb_tours
             
-        print("tours limite : ", tours_limitee, " param_nb : ", param_nb_tours)
         execute_other_query(SESSION['CONNEXION'], "INSERT INTO configuration (clee, valeur, parties_id) VALUES ('nb_tours', %s, %s)", [str(param_nb_tours), partie_id])
         
         #La difficulté

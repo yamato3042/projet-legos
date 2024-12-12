@@ -9,6 +9,11 @@ controleur = "controleurs/accueil.py"
 template = "accueil.html"
 
 [[routes]]
+url = "grille"
+controleur = "controleurs/grille.py"
+template = "grille.html"
+
+[[routes]]
 url = "nouvelle_partie"
 controleur = "controleurs/nouvelle_partie.py"
 template = "nouvelle_partie.html"

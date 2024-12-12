@@ -6,14 +6,12 @@ class Partie:
         self.id = id
         self.debut = debut
         self.fin = fin
-        print("fin : ", self.fin)
         self.grille_hauteur = grille_hauteur
         self.grille_longueur = grille_longueur
         self.grille = grille
     
         self.last_tour = 0
     def set_nb_tours(self, nb_tours):
-        print("set nb tous : ", nb_tours)
         if nb_tours == -1:
             self.tours_limités = False
         else:
@@ -60,7 +58,6 @@ def get_partie(connexion, partie_id: int):
     #On récupère les paramètres
     paramètres_raw = execute_select_query(connexion, "SELECT clee, valeur FROM configuration WHERE parties_id = %s", [partie_id])
     for i in paramètres_raw:
-        print(i)
         if i[0] == "nb_tours":
             partie.set_nb_tours(int(i[1]))
         elif i[0] == "difficulte":
@@ -90,7 +87,6 @@ def get_partie(connexion, partie_id: int):
 
 def add_tour_défausser(connexion, partie : Partie):
     partie.last_tour += 1
-    print("insertion")
     execute_other_query(connexion, "INSERT INTO tours (joueurs_id, parties_id,	numero, action) VALUES (%s, %s, %s, 'défausser')", [partie.joueur_id, partie.id, partie.last_tour])
     
 def add_tour_placer(connexion, partie: Partie, brique, position):
@@ -98,6 +94,10 @@ def add_tour_placer(connexion, partie: Partie, brique, position):
     execute_other_query(connexion, """INSERT INTO tours (joueurs_id, parties_id, numero, brique_id, action, position_x, position_y)
                                     VALUES (%s,%s,%s,%s, 'placer', %s,%s)""",
                                     [partie.joueur_id, partie.id, partie.last_tour, brique["id"], position[0], position[1]])
+    
+def add_tour_pénalité(connexion, partie: Partie):
+    partie.last_tour += 1
+    execute_other_query(connexion, "INSERT INTO tours (joueurs_id, parties_id,	numero, action) VALUES (%s, %s, %s, 'pénalité')", [partie.joueur_id, partie.id, partie.last_tour])
     
 def fin_partie(connexion, partie: Partie, gagné : bool):
     execute_other_query(connexion, "UPDATE parties SET fin = now() WHERE id = %s", [partie.id])

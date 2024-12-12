@@ -183,3 +183,36 @@ h3 {
     line-height: 0;
     text-align: center;
 }
+
+.index_inner {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: top;
+    gap: 10em;
+    padding-top: 2em;
+}
+
+.index_inner_tab {
+    display: flex;
+    flex-direction: column;
+    gap: 0em;
+}
+
+.index_inner_tab h3 {
+    font-weight: 800;
+    font-size: 1em;
+}
+
+.description p, .description ul{
+    font-size: 1em;
+    margin: 0;
+}
+.description ul {
+    margin: 0.2em;
+}
+
+.description {
+    padding-bottom: 0.2em;
+    border-bottom: 1px solid black;
+}

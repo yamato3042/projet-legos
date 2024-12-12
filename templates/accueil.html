@@ -2,92 +2,123 @@
 
 {% block main_content %}
 
-<ul>
-    <li>Nombre de parties joués sur le site : {{REQUEST_VARS["nb_parties"]}}</li>
-    <li>Nombre de constructions différentes : {{REQUEST_VARS["nb_constructions"]}}</li>
-    <li>Nombre de briques : {{REQUEST_VARS["nb_briques"]}}</li>
-</ul>
+<div class="index_inner">
+    <div class="index_inner_tab">
+        <div class="description">
+        <p>
+            Bienvenue sur la page d'accueil de notre Jeu de briques !<br>
+            Le but du jeu est simple, il suffit de remplir toutes les cases cibles de votre grille à l’aide des
+            briques.<br> À chaque tour, vous pouvez choisir une brique parmi les 4 proposées dans la pioche.<br>
+            Vous pouvez soit :<br></p>
+        <ul>
+            <li>Placer une brique sur la grille si elle correspond aux cases cibles encore libres.</li>
+            <li>Défausser une brique.</li>
+        </ul>
+        <p>
+            Le jeu se termine lorsque toutes les cases cibles sont recouvertes.<br>
+            Essayez de terminer en un minimum de tour pour obtenir le meilleur score. <br>Bonne chance !
+        </p>
+    </div>
 
+
+    <div>
+        <h3>Statistiques : </h3>
+        <ul>
+            <li>Nombre de parties joués sur le site : {{REQUEST_VARS["nb_parties"]}}</li>
+            <li>Nombre de constructions différentes : {{REQUEST_VARS["nb_constructions"]}}</li>
+            <li>Nombre de briques : {{REQUEST_VARS["nb_briques"]}}</li>
+        </ul>
+    </div>
 
     <div class="div_affichage_couleur">
-        <p>Top cinq des couleurs de brique :</p>
+        <h3>Top cinq des couleurs de brique :</h3>
         {% for i in REQUEST_VARS["top_couleurs"] %}
         <div class="affichage_couleur" style="background-color: {{i}};"></div>
         {% endfor %}
     </div>
 
+    <div>
+        <h3>Scores des joueurs</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Noms du joueur</th>
+                    <th>Score minimal</th>
+                    <th>Score maximal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in REQUEST_VARS["joueurs"] %}
+                <tr>
+                    <td>{{i["nom"]}}</td>
+                    <td>{{i["min"]}}</td>
+                    <td>{{i["max"]}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="index_inner_tab">
+    <div>
+        <h3>Parties avec le plus et le moins de pièces défaussés :</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Partie</th>
+                    <th>Nombre de pièces défaussés</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in REQUEST_VARS["defaussé"] %}
+                <tr>
+                    <td>{{i["id"]}}</td>
+                    <td>{{i["nb"]}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div>
 
-<table>
-    <thead>
-        <tr>
-            <th>Noms du joueur</th>
-            <th>Score minimal</th>
-            <th>Score maximal</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for i in REQUEST_VARS["joueurs"] %}
-        <tr>
-            <td>{{i["nom"]}}</td>
-            <td>{{i["min"]}}</td>
-            <td>{{i["max"]}}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        <h3>Nombre moyen de tours par période : </h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Période</th>
+                    <th>Nombre moyen de tours</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in REQUEST_VARS["moyen_tour"] %}
+                <tr>
+                    <td>{{i["periode"]}}</td>
+                    <td>{{i["moyenne"]}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <h3>Parties où les plus grandes pièces ont été joués : </h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Partie</th>
+                    <th>Nombre de pièces joués</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in REQUEST_VARS["top_3_grandes_pièces"] %}
+                <tr>
+                    <td>N°{{i["id"]}}</td>
+                    <td>{{i["nb_briques"]}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
-<p>Parties avec le plus et le moins de pièces défaussés :</p>
-<table>
-    <thead>
-        <tr>
-            <th>Partie</th>
-            <th>Nombre de pièces défaussés</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for i in REQUEST_VARS["defaussé"] %}
-        <tr>
-            <td>{{i["id"]}}</td>
-            <td>{{i["nb"]}}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<p>Nombre moyen de tours par période : </p>
-<table>
-    <thead>
-        <tr>
-            <th>Période</th>
-            <th>Nombre moyen de tours</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for i in REQUEST_VARS["moyen_tour"] %}
-        <tr>
-            <td>{{i["periode"]}}</td>
-            <td>{{i["moyenne"]}}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<p>Parties où les plus grandes pièces ont été joués : </p>
-<table>
-    <thead>
-        <tr>
-            <th>Partie</th>
-            <th>Nombre de pièces joués</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for i in REQUEST_VARS["top_3_grandes_pièces"] %}
-        <tr>
-            <td>N°{{i["id"]}}</td>
-            <td>{{i["nb_briques"]}}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
+</div>
 {% endblock %}
