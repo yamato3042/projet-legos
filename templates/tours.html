@@ -4,13 +4,17 @@
 
 <form action="" method="post" class="page_grille">
     <table>
-        {% for i in range(0,REQUEST_VARS["partie"].grille_longueur) %} {#TODO: Utiliser range() #}
+        {% for i in range(0,REQUEST_VARS["partie"].grille_longueur) %}
         <tr>
             {% for a in range(0,REQUEST_VARS["partie"].grille_hauteur) %}
             {% set var = REQUEST_VARS["partie"].grille[i][a] %}
             {% if var == -1 %}
             {#Case cochable#}
-            <td><input type="radio" name="grille" value="{{i}}-{{a}}"></td>
+                {% if REQUEST_VARS["partie"].fin == None %}
+                <td><input type="radio" name="grille" value="{{i}}-{{a}}"></td>
+                {% else %}
+                <td class="hachuré"> </td>
+                {% endif %}
             {% elif var == -2 %}
             {#Case grisé#}
             <td></td>
@@ -23,8 +27,13 @@
     </table>
 
     <div>
+        {% if REQUEST_VARS["partie"].tours_limités == True %}
+        <h3>Tour n°{{REQUEST_VARS["partie"].last_tour+1}}/{{REQUEST_VARS["partie"].nb_tours}}</h3>
+        {% else %}
         <h3>Tour n°{{REQUEST_VARS["partie"].last_tour+1}}</h3>
+        {% endif %}
         <h3>Difficulté : {{REQUEST_VARS["partie"].diff}}</h3>
+        {% if REQUEST_VARS["partie"].fin == None %}
         <div id="pioche">
             <div id="pioche_titre">Pioche</div>
             {% for i in REQUEST_VARS["pioche"] %}
@@ -48,6 +57,9 @@
             <div><input type="radio" name="action_tour" value="défausser"><label for="">Défausser</label></div>
         </div>
         <input type="submit">
+        {% else %}
+        <h3>Partie terminé le {{REQUEST_VARS["partie"].fin.strftime('%d/%m/%Y à %H:%M')}}</h3>
+        {% endif %}
     </div>
 </form>
 

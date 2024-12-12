@@ -6,14 +6,15 @@ class Partie:
         self.id = id
         self.debut = debut
         self.fin = fin
+        print("fin : ", self.fin)
         self.grille_hauteur = grille_hauteur
         self.grille_longueur = grille_longueur
         self.grille = grille
-        
+    
         self.last_tour = 0
     def set_nb_tours(self, nb_tours):
+        print("set nb tous : ", nb_tours)
         if nb_tours == -1:
-          
             self.tours_limités = False
         else:
             self.tours_limités = True
@@ -61,7 +62,7 @@ def get_partie(connexion, partie_id: int):
     for i in paramètres_raw:
         print(i)
         if i[0] == "nb_tours":
-            partie.set_nb_tours(i[1])
+            partie.set_nb_tours(int(i[1]))
         elif i[0] == "difficulte":
             partie.set_difficulté(i[1])
     
@@ -97,3 +98,12 @@ def add_tour_placer(connexion, partie: Partie, brique, position):
     execute_other_query(connexion, """INSERT INTO tours (joueurs_id, parties_id, numero, brique_id, action, position_x, position_y)
                                     VALUES (%s,%s,%s,%s, 'placer', %s,%s)""",
                                     [partie.joueur_id, partie.id, partie.last_tour, brique["id"], position[0], position[1]])
+    
+def fin_partie(connexion, partie: Partie, gagné : bool):
+    execute_other_query(connexion, "UPDATE parties SET fin = now() WHERE id = %s", [partie.id])
+    score = 0
+    if gagné:
+        score = partie.last_tour
+    execute_other_query(connexion, "UPDATE joueurs_parties SET score = %s, gagnant = %s WHERE joueurs_id = %s AND parties_id = %s",
+                        [score, gagné, partie.joueur_id, partie.id])
+    partie.fin = datetime.datetime.now()

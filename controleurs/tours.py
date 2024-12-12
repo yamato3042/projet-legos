@@ -1,4 +1,4 @@
-from model.model_tours import get_partie, add_tour_défausser, add_tour_placer
+from model.model_tours import get_partie, add_tour_défausser, add_tour_placer, fin_partie
 from util.pioche import get_pioche, update_pioche
 #Commence par vérifier que l'on a l'id de la partie
 ok = True
@@ -78,6 +78,20 @@ if ok:
                 add_tour_placer(SESSION['CONNEXION'], p, brique, [grille_x, grille_y])
                 #On change la pièce dans la pioche
                 update_pioche(SESSION['CONNEXION'], partie, p.diff, num_brique)
+                complète = True
+                for i in p.grille:
+                    for a in i:
+                        if a == -1:
+                            complète = False
+                            break
+                    if not complète:
+                        break
+                if complète:
+                    fin_partie(SESSION['CONNEXION'], p, True)
+        #On vérifie le non dépassement du nombre de tour
+        if p.tours_limités:
+            if p.last_tour >= p.nb_tours:
+                fin_partie(SESSION['CONNEXION'], p, False)
                         
                         
     for i in p.grille:
