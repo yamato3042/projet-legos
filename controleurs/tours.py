@@ -88,6 +88,9 @@ if ok:
                         break
                 if complète:
                     fin_partie(SESSION['CONNEXION'], p, True)
+            else:
+                #La brique n'est pas plaçable
+                REQUEST_VARS["err"] = "La brique n'est pas plaçable à cet endroit"
         #On vérifie le non dépassement du nombre de tour
         if p.tours_limités:
             if p.last_tour >= p.nb_tours:

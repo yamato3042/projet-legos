@@ -176,3 +176,10 @@ td {
 h3 {
     line-height: 0.3em;
 }
+
+.err {
+    color: red;
+    font-size: 1.2em;
+    line-height: 0;
+    text-align: center;
+}

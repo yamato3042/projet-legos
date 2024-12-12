@@ -40,19 +40,54 @@
 <table>
     <thead>
         <tr>
+            <th>Partie</th>
             <th>Nombre de pièces défaussés</th>
-            <th>Début</th>
-            <th>Fin</th>
         </tr>
     </thead>
     <tbody>
         {% for i in REQUEST_VARS["defaussé"] %}
         <tr>
+            <td>{{i["id"]}}</td>
             <td>{{i["nb"]}}</td>
-            <td>{{i["debut"]}}</td>
-            <td>{{i["fin"]}}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+
+<p>Nombre moyen de tours par période : </p>
+<table>
+    <thead>
+        <tr>
+            <th>Période</th>
+            <th>Nombre moyen de tours</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for i in REQUEST_VARS["moyen_tour"] %}
+        <tr>
+            <td>{{i["periode"]}}</td>
+            <td>{{i["moyenne"]}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p>Parties où les plus grandes pièces ont été joués : </p>
+<table>
+    <thead>
+        <tr>
+            <th>Partie</th>
+            <th>Nombre de pièces joués</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for i in REQUEST_VARS["top_3_grandes_pièces"] %}
+        <tr>
+            <td>N°{{i["id"]}}</td>
+            <td>{{i["nb_briques"]}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 {% endblock %}

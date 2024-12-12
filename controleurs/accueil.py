@@ -1,5 +1,5 @@
 from model.model_pg import count_instances, execute_select_query
-
+from util.mois import getMois
 #Demande 1 :
 REQUEST_VARS["nb_briques"] = count_instances(SESSION['CONNEXION'], 'briques')[0][0]
 REQUEST_VARS["nb_constructions"] = count_instances(SESSION['CONNEXION'], 'constructions')[0][0]
@@ -20,12 +20,6 @@ joueurs_raw = execute_select_query(SESSION['CONNEXION'], """SELECT prenom, COALE
                                                 ORDER BY MAX(score) DESC
                                                 LIMIT 15""")
 
-#TODO: TEMP
-joueurs_raw = list(joueurs_raw)
-joueurs_raw.append(["Jacques", "25", "250"])
-joueurs_raw.append(["Louis", "38", "400"])
-joueurs_raw.append(["Paul", "12", "1000"])
-
 joueurs = []
 for i in joueurs_raw:
     joueurs.append({
@@ -37,36 +31,74 @@ for i in joueurs_raw:
 #Demande 4
 #TODO: Refaire
 REQUEST_VARS["joueurs"] = joueurs
-defaussé_raw = execute_select_query(SESSION['CONNEXION'], """SELECT COUNT(*), debut, fin FROM tours
-                                                LEFT JOIN parties ON parties.id = parties_id 
-                                                GROUP BY parties.id, debut, fin, action
-                                                HAVING action LIKE 'défaussée'""")
-
-#TODO: TEMP
-defaussé_raw = list(defaussé_raw)
-defaussé_raw.append([50, "11/02/1992", "13/02/1992"])
-defaussé_raw.append([1585, "25/12/2009", "25/12/2010"])
-
+defaussé_raw = execute_select_query(SESSION['CONNEXION'], """WITH counts AS (
+  SELECT 
+    COUNT(*) AS nb, 
+    parties_id 
+  FROM tours
+  LEFT JOIN parties ON parties_id = parties.id AND fin IS NOT NULL
+  WHERE action = 'défausser'
+  GROUP BY parties_id
+),
+max_min AS (
+  SELECT 
+    MAX(nb) AS max_nb, 
+    MIN(nb) AS min_nb
+  FROM counts
+)
+SELECT 
+  c.parties_id, 
+  c.nb 
+FROM counts c
+JOIN max_min mm
+ON c.nb = mm.max_nb OR c.nb = mm.min_nb;""")
 
 defaussé = []
 for i in defaussé_raw:
     defaussé.append({
-        "nb": i[0],
-        "debut": i[1],
-        "fin": i[2]
+        "id": i[0],
+        "nb": i[1]
     })
-defaussé.sort(key=lambda x: x["nb"])
-
-if len(defaussé) > 10:
-    # Sinon, extraire les 5 premiers et 5 derniers éléments
-    premiers_cinq = defaussé[:5]
-    derniers_cinq = defaussé[-5:]
-    defaussé = premiers_cinq + derniers_cinq
 
 REQUEST_VARS["defaussé"] = defaussé
 
 #Demande 5:
-#TODO:
+moyen_tour_raw = execute_select_query(SESSION['CONNEXION'], """SELECT 
+    EXTRACT(YEAR FROM p.debut) AS annee,
+    EXTRACT(MONTH FROM p.debut) AS mois,
+    AVG(t.nb_tours) AS moyenne_tours
+FROM (
+    SELECT 
+        parties_id, 
+        COUNT(*) AS nb_tours
+    FROM jeu.tours
+    GROUP BY parties_id
+) t
+JOIN jeu.parties p ON t.parties_id = p.id
+GROUP BY annee, mois
+ORDER BY annee, mois;""")
+
+moyen_tour = []
+for i in moyen_tour_raw:
+    moyen_tour.append({"periode": f"{getMois(i[1], True)} {i[0]}", "moyenne": round(i[2], 2)})
+REQUEST_VARS["moyen_tour"] = moyen_tour
 
 #Demande 6:
-#TODO:
+top_3_grandes_pieces_raw = execute_select_query(SESSION['CONNEXION'], """SELECT FLOOR(AVG(longueur * largeur)), COUNT(*), parties_id
+                                                                        FROM tours
+                                                                        LEFT JOIN briques ON briques.id = tours.brique_id
+                                                                        WHERE action = 'placer'
+                                                                        GROUP BY parties_id
+                                                                        ORDER BY AVG(longueur * largeur) DESC
+                                                                        LIMIT 3""")
+
+top_3_grandes_pieces = []
+for i in top_3_grandes_pieces_raw:
+    top_3_grandes_pieces.append({
+        "moy": i[0],
+        "nb_briques": i[1],
+        "id": i[2]
+    })
+#On trie en fonction du nombre de briques utilises
+top_3_grandes_pieces = sorted(top_3_grandes_pieces, key=lambda x: x["nb_briques"], reverse=True)
+REQUEST_VARS["top_3_grandes_pièces"] = top_3_grandes_pieces

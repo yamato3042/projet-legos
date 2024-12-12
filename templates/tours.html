@@ -2,6 +2,9 @@
 
 {% block main_content %}
 
+{%if REQUEST_VARS["err"] %}
+<p class="err">{{REQUEST_VARS["err"]}}</p>
+{% endif %}
 <form action="" method="post" class="page_grille">
     <table>
         {% for i in range(0,REQUEST_VARS["partie"].grille_longueur) %}
